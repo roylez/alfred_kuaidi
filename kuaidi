@@ -22,6 +22,7 @@ def record_query(save_file, detail)
   end
   saves[detail[:nu]] = {
     :company => decode_company(detail[:com]),
+    :code => detail[:com],
     :last_query => Time.now.to_s,
     :status  => detail[:data][0]
   }
@@ -32,12 +33,16 @@ def record_query(save_file, detail)
   open(save_file, 'w') {|f| f.puts saves.to_json}
 end
 
-def kuaidi_status(package_no)
+def company_code(package_no)
   url = 'http://www.kuaidi100.com/autonumber/auto?num=' + package_no
   res = JSON.parse open(url).read
   rec = res.sort_by{|i| i['noCount'] }.last
-  company_code = rec['comCode']
-  detail_url = "http://www.kuaidi100.com/query?type=#{company_code}&postid=#{package_no}&id=1&valicode=&temp=0.08001715072286408"
+  rec['comCode']
+end
+
+def kuaidi_status(package_no, com_code = nil)
+  company_code ||= company_code(package_no)
+  detail_url     = "http://www.kuaidi100.com/query?type=#{company_code}&postid=#{package_no}&id=1&valicode=&temp=0.08001715072286408"
   JSON.parse( open(detail_url).read, :symbolize_names => true )
 end
 
@@ -118,9 +123,9 @@ if __FILE__==$0
     }
   end.parse!
 
-  package = ARGV.first
+  com_code, package = ARGV.first.split(':')
   begin
-    detail = kuaidi_status package
+    detail = kuaidi_status(package, com_code)
   rescue
     puts "没找到有关快递单 #{package} 的信息"
     exit

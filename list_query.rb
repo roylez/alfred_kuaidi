@@ -26,7 +26,7 @@ def format_list(list)
     item = Element.new('item')
     item.add_attribute('arg', number)
     item.add_attribute('valid', 'no')
-    item.add_attribute('autocomplete', number)
+    item.add_attribute('autocomplete', "#{record[:code]}:#{number}")
     title = Element.new('title')
     title.text = "#{record[:company]}    #{number}"
     subtitle = Element.new('subtitle')

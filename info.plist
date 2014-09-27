@@ -111,7 +111,7 @@ fi</string>
 				<key>escaping</key>
 				<integer>127</integer>
 				<key>script</key>
-				<string>echo {query}</string>
+				<string>echo {query}|tr ";" "\n"</string>
 				<key>type</key>
 				<integer>0</integer>
 			</dict>
