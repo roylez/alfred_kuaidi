@@ -1,0 +1,139 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+#Author: Roy L Zuo (roylzuo at gmail dot com)
+#Description:
+
+require 'open-uri'
+require 'json'
+
+COMPANY_FILE = 'company.json'
+SAVE_FILE = 'query.json'
+
+$company_list = []
+if File.file? COMPANY_FILE
+  $company_list = JSON.parse( open(COMPANY_FILE).read.force_encoding('UTF-8'), :symbolize_names => true )
+end
+
+def record_query(save_file, detail)
+  begin
+    saves = JSON.parse(open(save_file).read.force_encoding('UTF-8'), :symbolize_names => true)
+  rescue
+    saves = {}
+  end
+  saves[detail[:nu]] = {
+    :company => decode_company(detail[:com]),
+    :last_query => Time.now.to_s,
+    :status  => detail[:data][0]
+  }
+  # delete older then 30 day records
+  one_month = 30*24*3600
+  saves = saves.delete_if {|_,v| Time.now - Time.parse(v[:last_query]) > one_month }
+
+  open(save_file, 'w') {|f| f.puts saves.to_json}
+end
+
+def kuaidi_status(package_no)
+  url = 'http://www.kuaidi100.com/autonumber/auto?num=' + package_no
+  res = JSON.parse open(url).read
+  rec = res.sort_by{|i| i['noCount'] }.last
+  company_code = rec['comCode']
+  detail_url = "http://www.kuaidi100.com/query?type=#{company_code}&postid=#{package_no}&id=1&valicode=&temp=0.08001715072286408"
+  JSON.parse( open(detail_url).read, :symbolize_names => true )
+end
+
+def format_status_record(record, color = "\e[37m")
+  time = record[:time]
+  context = record[:context].gsub(/\s+/, ' ')
+  rec = time + ' ' + context
+  color.to_s.empty? ? rec : color + rec + "\e[m"
+end
+
+def format_screen_detail(detail)
+  puts "\e[32;1m" + detail[:com] + "\t\e[31;1m" + ARGV.first + "\e[m\n"
+  data = detail[:data].reverse
+  data[0..-2].each {|i| puts format_status_record(i) }
+  format_status_record(data.last, "\e[33;1m")
+end
+
+def format_detail(detail, output)
+  send("format_#{output}_detail", detail)
+end
+
+def decode_company(code)
+  if com = $company_list.find{|i| i[:code] == code }
+    com[:companyname]
+  else
+    code
+  end
+end
+
+def format_alfred_detail(detail)
+  require 'rexml/document'
+  include REXML
+  root = Element.new('items')
+
+  # heading item
+  item = Element.new('item')
+  item.add_attribute('arg', detail[:data].collect{|r| format_status_record(r,nil)}.join(";") )
+  title = Element.new('title')
+  company = decode_company( detail[:com])
+  title.text = company + '    ' + detail[:nu]
+  icon = Element.new('icon')
+  subtitle = Element.new('subtitle')
+  subtitle.text = '按 Enter 将快递状态复制到剪切板'
+  icon.text = 'package-x-generic.png'
+  [title, icon, subtitle].each {|i| item << i }
+  root << item
+
+  # detail tracking status
+  total = detail[:data].size
+  detail[:data].each.with_index do |record, ind|
+    item = Element.new('item')
+    item.add_attribute('valid', 'no')
+    title = Element.new('title')
+    title.text = "[%02d]" %[ total - ind ] + ' ' + record[:context].gsub(/\s+/, ' ')
+    subtitle = Element.new('subtitle')
+    subtitle.text = record[:time]
+    icon = Element.new('icon')
+    icon.text = 'go-up.png'
+    if title.text =~ /签收/
+      icon.text = 'pass.png'
+    end
+    [title, icon, subtitle].each {|i| item << i }
+    root << item
+  end
+  root.to_s
+end
+
+if __FILE__==$0
+  require 'optparse'
+
+  options = {}
+  OptionParser.new do |opts|
+    opts.banner = "Usage: #{$0} [options] [STRING]"
+    opts.on('-s','--short','Show only last status') { options[:short] = true }
+    options[:output] = :screen
+    opts.on('-f','--format OUT','How the results should be output :screen or :alfred XML') {|o|
+      options[:output] = o.to_sym
+    }
+  end.parse!
+
+  package = ARGV.first
+  begin
+    detail = kuaidi_status package
+  rescue
+    puts "没找到有关快递单 #{package} 的信息"
+    exit
+  end
+
+  if options[:short]
+    detail[:data] = detail[:data][0..0]
+  end
+
+  puts format_detail(detail, options[:output])
+
+  if options[:output] == :alfred
+    # record query list
+    record_query(SAVE_FILE, detail)
+  end
+end
