@@ -123,7 +123,7 @@ if __FILE__==$0
     }
   end.parse!
 
-  com_code, package = ARGV.first.split(':')
+  package, com_code = ARGV.first.split(':')
   begin
     detail = kuaidi_status(package, com_code)
   rescue
