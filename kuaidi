@@ -49,7 +49,7 @@ end
 def format_status_record(record, color = "\e[37m")
   time = record[:time]
   context = record[:context].gsub(/\s+/, ' ')
-  rec = time + ' ' + context
+  rec = time + '   ' + context
   color.to_s.empty? ? rec : color + rec + "\e[m"
 end
 
