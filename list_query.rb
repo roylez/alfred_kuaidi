@@ -33,7 +33,7 @@ def format_list(list)
     subtitle.text = format_status_record(record[:status], nil) + \
       "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )"
     icon = Element.new('icon')
-    icon.text = 'package-x-generic.png'
+    icon.text =  record[:status][:context] =~ /签收/ ? 'pass.png' : 'package-x-generic.png'
     [title, icon, subtitle].each {|i| item << i }
     root << item
   end
