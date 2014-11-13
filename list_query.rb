@@ -8,7 +8,7 @@ load './kuaidi'
 
 QUERY_LIST = 'query.json'
 
-def format_new_list(list)
+def format_list(list)
   xml = AlfredXML.new
   list = list.sort{|a,b| a.last[:last_query] <=> b.last[:last_query]}.reverse
 
@@ -60,4 +60,4 @@ results = {}
 if File.file? QUERY_LIST
   results = JSON.parse(open(QUERY_LIST).read.force_encoding('UTF-8'), :symbolize_names => true)
 end
-puts format_new_list(results)
+puts format_list(results)
