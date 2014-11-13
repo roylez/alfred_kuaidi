@@ -8,36 +8,33 @@ load './kuaidi'
 
 QUERY_LIST = 'query.json'
 
-def format_list(list)
-  require 'rexml/document'
-  include REXML
-  root = Element.new('items')
-
+def format_new_list(list)
+  xml = AlfredXML.new
   list = list.sort{|a,b| a.last[:last_query] <=> b.last[:last_query]}.reverse
-  if list.empty?
-    item = Element.new('item')
-    title = Element.new('title')
-    title.text = "没有查到任何快递信息"
-    item << title
-    root << item
-  end
+
+  xml.add_item { title '没有查到任何快递信息' } if list.empty?
 
   list.each do |number, record|
-    item = Element.new('item')
-    item.add_attribute('arg', number)
-    item.add_attribute('valid', 'no')
-    item.add_attribute('autocomplete', "#{number}:#{record[:code]}")
-    title = Element.new('title')
-    title.text = "#{record[:company]}    #{number}"
-    subtitle = Element.new('subtitle')
-    subtitle.text = format_status_record(record[:status], nil) + \
-      "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )"
-    icon = Element.new('icon')
-    icon.text =  record[:status][:context] =~ /签收/ ? 'pass.png' : 'package-x-generic.png'
-    [title, icon, subtitle].each {|i| item << i }
-    root << item
+    xml.add_item do
+      attribute     :arg,   number
+      attribute     :valid, 'no'
+      if record[:status]
+        attribute     :autocomplete, "#{number}:#{record[:code]}"
+        title         "#{record[:company]}    #{number}"
+        icon          record[:status][:context] =~ /签收/ ?
+          'pass.png' : 'package-x-generic.png'
+        subtitle      format_status_record(record[:status], nil) + \
+          "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )"
+      else
+        attribute     :autocomplete, number
+        title         "未知快递    #{number}"
+        subtitle      "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )"
+        icon          "help-browser.png"
+      end
+    end
   end
-  root.to_s
+
+  xml.to_s
 end
 
 def relative_time(start_time)
@@ -63,4 +60,4 @@ results = {}
 if File.file? QUERY_LIST
   results = JSON.parse(open(QUERY_LIST).read.force_encoding('UTF-8'), :symbolize_names => true)
 end
-puts format_list(results)
+puts format_new_list(results)

@@ -55,7 +55,7 @@
 				<key>onlyshowifquerypopulated</key>
 				<false/>
 				<key>output</key>
-				<integer>2</integer>
+				<integer>1</integer>
 				<key>removeextension</key>
 				<false/>
 				<key>sticky</key>
@@ -164,6 +164,6 @@ fi</string>
 		</dict>
 	</dict>
 	<key>webaddress</key>
-	<string></string>
+	<string>https://github.com/roylez/alfred_kuaidi</string>
 </dict>
 </plist>

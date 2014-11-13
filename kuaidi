@@ -5,6 +5,8 @@
 
 require 'open-uri'
 require 'json'
+require 'rexml/document'
+include REXML
 
 COMPANY_FILE = 'company.json'
 SAVE_FILE = 'query.json'
@@ -14,17 +16,17 @@ if File.file? COMPANY_FILE
   $company_list = JSON.parse( open(COMPANY_FILE).read.force_encoding('UTF-8'), :symbolize_names => true )
 end
 
-def record_query(save_file, detail)
+def record_query(save_file, package, detail)
   begin
     saves = JSON.parse(open(save_file).read.force_encoding('UTF-8'), :symbolize_names => true)
   rescue
     saves = {}
   end
-  saves[detail[:nu]] = {
+  saves[package] = {
     :company => decode_company(detail[:com]),
     :code => detail[:com],
     :last_query => Time.now.to_s,
-    :status  => detail[:data][0]
+    :status  => detail[:data] ? detail[:data][0] : nil
   }
   # delete older then 30 day records
   one_month = 30*24*3600
@@ -54,6 +56,11 @@ def format_status_record(record, color = "\e[37m")
 end
 
 def format_screen_detail(detail)
+  p detail if $DEBUG
+  if detail[:message] != 'ok'
+    puts detail[:message]
+    return
+  end
   puts "\e[32;1m" + detail[:com] + "\t\e[31;1m" + ARGV.first + "\e[m\n"
   data = detail[:data].reverse
   data[0..-2].each {|i| puts format_status_record(i) }
@@ -72,42 +79,71 @@ def decode_company(code)
   end
 end
 
+class AlfredXML < Element
+  def initialize
+    super('items')
+  end
+
+  def add_item(&block)
+    item = AlfredXMLItem.new
+    item.instance_eval( &block )
+    self << item
+  end
+end
+
+class AlfredXMLItem < Element
+  def initialize
+    super('item')
+  end
+  def title  text
+    self << elem_with_text(:title, text)
+  end
+  def subtitle text
+    self << elem_with_text(:subtitle, text)
+  end
+  def icon text
+    self << elem_with_text(:icon, text)
+  end
+  def attribute(att, value)
+    attributes[att.to_s] = value
+  end
+
+  private
+  def elem_with_text(label, text)
+    el = Element.new(label.to_s)
+    el.text = text
+    el
+  end
+end
+
 def format_alfred_detail(detail)
-  require 'rexml/document'
-  include REXML
-  root = Element.new('items')
 
-  # heading item
-  item = Element.new('item')
-  item.add_attribute('arg', detail[:data].collect{|r| format_status_record(r,nil)}.join(";") )
-  title = Element.new('title')
-  company = decode_company( detail[:com])
-  title.text = company + '    ' + detail[:nu]
-  icon = Element.new('icon')
-  subtitle = Element.new('subtitle')
-  subtitle.text = '按 Enter 将快递状态复制到剪切板'
-  icon.text = 'package-x-generic.png'
-  [title, icon, subtitle].each {|i| item << i }
-  root << item
+  al = AlfredXML.new
+  unless detail[:message] == 'ok'
+    al.add_item do
+      title detail[:message]
+    end
+    return al.to_s
+  end
 
-  # detail tracking status
+  al.add_item do
+    attribute :arg, detail[:data].collect{|r| format_status_record(r,nil)}.join(";")
+    title     decode_company( detail[:com]) + '    ' + detail[:nu]
+    icon      'package-x-generic.png'
+    subtitle  '按 Enter 将快递状态复制到剪切板'
+  end
+
   total = detail[:data].size
   detail[:data].each.with_index do |record, ind|
-    item = Element.new('item')
-    item.add_attribute('valid', 'no')
-    title = Element.new('title')
-    title.text = "[%02d]" %[ total - ind ] + ' ' + record[:context].gsub(/\s+/, ' ')
-    subtitle = Element.new('subtitle')
-    subtitle.text = record[:time]
-    icon = Element.new('icon')
-    icon.text = 'go-up.png'
-    if title.text =~ /签收/
-      icon.text = 'pass.png'
+    al.add_item do
+      title     ("[%02d]" %[ total - ind ] + ' ' + record[:context].gsub(/\s+/, ' '))
+      subtitle  record[:time]
+      icon      record[:context] =~ /签收/ ? 'pass.png' : 'go-up.png'
+      attribute :valid, 'no'
     end
-    [title, icon, subtitle].each {|i| item << i }
-    root << item
   end
-  root.to_s
+
+  al.to_s
 end
 
 if __FILE__==$0
@@ -139,6 +175,6 @@ if __FILE__==$0
 
   if options[:output] == :alfred
     # record query list
-    record_query(SAVE_FILE, detail)
+    record_query(SAVE_FILE, package, detail)
   end
 end
