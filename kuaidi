@@ -81,16 +81,13 @@ end
 
 def decode_company(code)
   if com = $company_list.find{|i| i[:code] == code }
-    com[:companyname]
-  else
-    code
+    return com[:companyname]
   end
+  code
 end
 
 class AlfredXML < Element
-  def initialize
-    super('items')
-  end
+  def initialize; super('items'); end
 
   def add_item(&block)
     item = AlfredXMLItem.new
@@ -100,9 +97,7 @@ class AlfredXML < Element
 end
 
 class AlfredXMLItem < Element
-  def initialize
-    super('item')
-  end
+  def initialize; super('item'); end
   def title  text
     self << elem_with_text(:title, text)
   end
@@ -154,21 +149,29 @@ def format_alfred_detail(detail)
   al.to_s
 end
 
+def saved_pacakge_detail(package, attr)
+  $saves ||= File.file?(SAVE_FILE) ? JSON.parse(open(SAVE_FILE).read.force_encoding('utf-8')) : {}
+  $saves[package] ? $saves[package][attr.to_s] : nil
+end
+
 if __FILE__==$0
   require 'optparse'
 
   options = {}
   OptionParser.new do |opts|
-    opts.banner = "Usage: #{$0} [options] [STRING]"
-    opts.on('-s','--short','Show only last status') { options[:short] = true }
+    opts.banner = "用法: #{$0} [options] <STRING>"
+    opts.on('-s','--short','只显示最后结果') { options[:short] = true }
     options[:output] = :screen
-    opts.on('-f','--format OUT','How the results should be output :screen or :alfred XML') {|o|
+    opts.on('-f','--format OUT','结果将以何种方式输出 :screen 或 :alfred XML') {|o|
       options[:output] = o.to_sym
     }
   end.parse!
 
-  package, com_code = ARGV.first.split(':')
-  detail = kuaidi_status(package, com_code)
+  abort "请输入快递号： #{$0} <快递单号>"  if  ARGV.empty?
+
+  package = ARGV.first
+
+  detail = kuaidi_status(package, saved_pacakge_detail(package, :code))
 
   detail ||= {:status => 'error', :message => "没找到有关快递单 #{package} 的信息"}
 

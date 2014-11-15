@@ -18,15 +18,14 @@ def format_list(list)
     xml.add_item do
       attribute     :arg,   number
       attribute     :valid, 'no'
+      attribute     :autocomplete, number
       if record[:status]
-        attribute     :autocomplete, "#{number}:#{record[:code]}"
         title         "#{record[:company]}    #{number}"
         icon          record[:status][:context] =~ /签收/ ?
           'pass.png' : 'package-x-generic.png'
         subtitle      format_status_record(record[:status], nil) + \
           "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )"
       else
-        attribute     :autocomplete, number
         title         "未知快递    #{number}"
         subtitle      "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )"
         icon          "help-browser.png"
