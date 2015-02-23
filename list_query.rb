@@ -9,31 +9,33 @@ load './kuaidi'
 QUERY_LIST = 'query.json'
 
 def format_list(list)
-  xml = AlfredXML.new
   list = list.sort{|a,b| a.last[:last_query] <=> b.last[:last_query]}.reverse
+  res = []
 
-  xml.add_item { title '没有查到任何快递信息' } if list.empty?
+  res << [ {}, :title => '没有查到任何快递信息'] if list.empty?
 
   list.each do |number, record|
-    xml.add_item do
-      attribute     :arg,   number
-      attribute     :valid, 'no'
-      attribute     :autocomplete, number
-      if record[:status]
-        title         "#{record[:company]}    #{number}"
-        icon          record[:status][:context] =~ /签收/ ?
-          'pass.png' : 'package-x-generic.png'
-        subtitle      format_status_record(record[:status], nil) + \
-          "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )"
-      else
-        title         "未知快递    #{number}"
-        subtitle      "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )"
-        icon          "help-browser.png"
-      end
-    end
+    res << [
+      {
+        :arg          => number,
+        :valid        => 'no',
+        :autocomplete => number,
+      },
+      record[:status] ?
+        {
+        :title    => "#{record[:company]}    #{number}",
+        :icon     => record[:status][:context] =~ /签收/ ? 'success.png' : 'truck.png',
+        :subtitle => format_status_record(record[:status], nil) + "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )",
+        }
+        :
+        {
+          :title    => "未知快递    #{number}",
+          :subtitle => "  ( 上次查询：#{relative_time(Time.parse record[:last_query])} )",
+          :icon     => "question.png",
+        }
+    ]
   end
-
-  xml.to_s
+  res
 end
 
 def relative_time(start_time)
@@ -55,8 +57,27 @@ def relative_time(start_time)
   end
 end
 
+def possible_clipboard_tracking_number
+  clipstring = `pbpaste`
+  clipstring =~ /^\w+$/ ? clipstring : nil
+end
+
 results = {}
 if File.file? QUERY_LIST
   results = JSON.parse(open(QUERY_LIST).read.force_encoding('UTF-8'), :symbolize_names => true)
 end
-puts format_list(results)
+list = format_list(results)
+
+if tracking_number = possible_clipboard_tracking_number
+  list.unshift(
+    [
+      {:valid => 'no', :autocomplete => tracking_number},
+      {:title    => "[剪切板] 查询: #{tracking_number}",
+       :subtitle => '按 Enter 把剪切板里的内容作为快递单号查询',
+       :icon     => 'paste.png'
+      }
+    ]
+  )
+end
+
+puts AlfredXML.from_list list

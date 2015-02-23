@@ -5,7 +5,7 @@
 
 require 'open-uri'
 require 'json'
-require 'rexml/document'
+require_relative 'alfred'
 include REXML
 
 COMPANY_FILE = 'company.json'
@@ -86,39 +86,6 @@ def decode_company(code)
   code
 end
 
-class AlfredXML < Element
-  def initialize; super('items'); end
-
-  def add_item(&block)
-    item = AlfredXMLItem.new
-    item.instance_eval( &block )
-    self << item
-  end
-end
-
-class AlfredXMLItem < Element
-  def initialize; super('item'); end
-  def title  text
-    self << elem_with_text(:title, text)
-  end
-  def subtitle text
-    self << elem_with_text(:subtitle, text)
-  end
-  def icon text
-    self << elem_with_text(:icon, text)
-  end
-  def attribute(att, value)
-    attributes[att.to_s] = value
-  end
-
-  private
-  def elem_with_text(label, text)
-    el = Element.new(label.to_s)
-    el.text = text
-    el
-  end
-end
-
 def format_alfred_detail(detail)
 
   al = AlfredXML.new
@@ -132,7 +99,7 @@ def format_alfred_detail(detail)
   al.add_item do
     attribute :arg, detail[:data].collect{|r| format_status_record(r,nil)}.join(";")
     title     decode_company( detail[:com]) + '    ' + detail[:nu]
-    icon      'package-x-generic.png'
+    icon      'icon.png'
     subtitle  '按 Enter 将快递状态复制到剪切板'
   end
 
@@ -141,7 +108,7 @@ def format_alfred_detail(detail)
     al.add_item do
       title     ("[%02d]" %[ total - ind ] + ' ' + record[:context].gsub(/\s+/, ' '))
       subtitle  record[:time]
-      icon      record[:context] =~ /签收/ ? 'pass.png' : 'go-up.png'
+      icon      record[:context] =~ /签收/ ? 'success.png' : 'up.png'
       attribute :valid, 'no'
     end
   end
