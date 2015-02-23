@@ -4,6 +4,7 @@
 
 require 'json'
 require 'time'
+require_relative 'alfred'
 load './kuaidi'
 
 QUERY_LIST = 'query.json'

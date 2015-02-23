@@ -81,11 +81,19 @@
 				<integer>127</integer>
 				<key>keyword</key>
 				<string>kd</string>
+				<key>queuedelaycustom</key>
+				<integer>1</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
 				<key>runningsubtext</key>
 				<string>查询中</string>
 				<key>script</key>
 				<string>if [[ -n "{query}" ]]; then
-  /usr/bin/ruby ./kuaidi -f alfred {query}
+  /usr/bin/ruby ./kuaidi_query.rb {query}
 else
   /usr/bin/ruby ./list_query.rb
 fi</string>

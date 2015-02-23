@@ -5,8 +5,6 @@
 
 require 'open-uri'
 require 'json'
-require_relative 'alfred'
-include REXML
 
 COMPANY_FILE = 'company.json'
 SAVE_FILE = 'query.json'
@@ -86,36 +84,6 @@ def decode_company(code)
   code
 end
 
-def format_alfred_detail(detail)
-
-  al = AlfredXML.new
-  unless detail[:message] == 'ok'
-    al.add_item do
-      title detail[:message]
-    end
-    return al.to_s
-  end
-
-  al.add_item do
-    attribute :arg, detail[:data].collect{|r| format_status_record(r,nil)}.join(";")
-    title     decode_company( detail[:com]) + '    ' + detail[:nu]
-    icon      'icon.png'
-    subtitle  '按 Enter 将快递状态复制到剪切板'
-  end
-
-  total = detail[:data].size
-  detail[:data].each.with_index do |record, ind|
-    al.add_item do
-      title     ("[%02d]" %[ total - ind ] + ' ' + record[:context].gsub(/\s+/, ' '))
-      subtitle  record[:time]
-      icon      record[:context] =~ /签收/ ? 'success.png' : 'up.png'
-      attribute :valid, 'no'
-    end
-  end
-
-  al.to_s
-end
-
 def saved_pacakge_detail(package, attr)
   $saves ||= File.file?(SAVE_FILE) ? JSON.parse(open(SAVE_FILE).read.force_encoding('utf-8')) : {}
   $saves[package] ? $saves[package][attr.to_s] : nil
@@ -129,9 +97,6 @@ if __FILE__==$0
     opts.banner = "用法: #{$0} [options] <STRING>"
     opts.on('-s','--short','只显示最后结果') { options[:short] = true }
     options[:output] = :screen
-    opts.on('-f','--format OUT','结果将以何种方式输出 :screen 或 :alfred XML') {|o|
-      options[:output] = o.to_sym
-    }
   end.parse!
 
   abort "请输入快递号： #{$0} <快递单号>"  if  ARGV.empty?
@@ -147,9 +112,4 @@ if __FILE__==$0
   end
 
   puts format_detail(detail, options[:output])
-
-  if options[:output] == :alfred
-    # record query list
-    record_query(SAVE_FILE, package, detail)
-  end
 end
