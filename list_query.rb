@@ -59,7 +59,7 @@ def relative_time(start_time)
 end
 
 def possible_clipboard_tracking_number
-  clipstring = `pbpaste`
+  clipstring = `pbpaste`.strip
   clipstring =~ /^\w+$/ ? clipstring : nil
 end
 
