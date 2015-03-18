@@ -26,9 +26,9 @@ def format_alfred_detail(detail)
   total = detail[:data].size
   detail[:data].each.with_index do |record, ind|
     al.add_item do
-      title     ("[%02d]" %[ total - ind ] + ' ' + record[:context].gsub(/\s+/, ' '))
+      title     ("[%02d]" %  (total - ind)  + ' ' + record[:context].gsub(/\s+/, ' '))
       subtitle  record[:time]
-      icon      record[:context] =~ /签收/ ? 'success.png' : 'up.png'
+      icon      record[:context] =~ /签收/ ? 'success.png' : ( ind.zero? ? 'truck.png' : 'up.png' )
       attribute :valid, 'no'
     end
   end
