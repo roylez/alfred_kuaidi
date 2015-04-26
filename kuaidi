@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # coding: utf-8
-#Author: Roy L Zuo (roylzuo at gmail dot com)
-#Description:
+#Description: 通过kuaidi100查询快递
 
 require 'open-uri'
 require 'json'
@@ -36,6 +35,8 @@ def record_query(save_file, package, detail)
   numbers = saves.keys
   partial_keys = numbers.select{|k| numbers.any?{|i| i.to_s != k.to_s and i.to_s.include? k.to_s } }
   partial_keys.each{|k| saves.delete(k) }
+  # delete the ones that completes to "clean"
+  saves.delete_if{|k, v| "clean".include? k.to_s }
 
   open(save_file, 'w') {|f| f.puts saves.to_json}
 end

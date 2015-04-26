@@ -36,6 +36,28 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>5704D04E-1A19-4674-B4A6-D3EB030B94AF</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B97F5196-169F-473B-9751-F3DA9291CA68</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>B97F5196-169F-473B-9751-F3DA9291CA68</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>56F533F1-9451-41DF-9F00-F7340B43F3EB</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Roy Zuo</string>
@@ -69,6 +91,23 @@
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
 			<string>A70A4E1E-712E-4575-967A-0AA64960904D</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>127</integer>
+				<key>script</key>
+				<string>echo {query}|tr ";" "\n"</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>22B8ECA9-C3D1-4670-ACEE-79335B9AAEEA</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -116,23 +155,6 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>escaping</key>
-				<integer>127</integer>
-				<key>script</key>
-				<string>echo {query}|tr ";" "\n"</string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>22B8ECA9-C3D1-4670-ACEE-79335B9AAEEA</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>autopaste</key>
 				<false/>
 				<key>clipboardtext</key>
@@ -142,6 +164,67 @@ fi</string>
 			<string>alfred.workflow.output.clipboard</string>
 			<key>uid</key>
 			<string>1D9D3C1D-2D95-4BCC-B606-154D8CE31E7B</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>output</key>
+				<integer>0</integer>
+				<key>removeextension</key>
+				<false/>
+				<key>sticky</key>
+				<false/>
+				<key>text</key>
+				<string>快递查询记录已经全部清除！</string>
+				<key>title</key>
+				<string>快递查询</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>56F533F1-9451-41DF-9F00-F7340B43F3EB</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>kdc</string>
+				<key>text</key>
+				<string>kdc 删除所有查询记录</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>5704D04E-1A19-4674-B4A6-D3EB030B94AF</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>127</integer>
+				<key>script</key>
+				<string>rm -f query.json</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B97F5196-169F-473B-9751-F3DA9291CA68</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -158,17 +241,32 @@ fi</string>
 		<key>22B8ECA9-C3D1-4670-ACEE-79335B9AAEEA</key>
 		<dict>
 			<key>ypos</key>
-			<real>110</real>
+			<real>80</real>
 		</dict>
 		<key>4B7DB9D4-3060-44CE-B15F-D37AD4D1B7F0</key>
 		<dict>
 			<key>ypos</key>
-			<real>110</real>
+			<real>80</real>
+		</dict>
+		<key>56F533F1-9451-41DF-9F00-F7340B43F3EB</key>
+		<dict>
+			<key>ypos</key>
+			<real>300</real>
+		</dict>
+		<key>5704D04E-1A19-4674-B4A6-D3EB030B94AF</key>
+		<dict>
+			<key>ypos</key>
+			<real>300</real>
 		</dict>
 		<key>A70A4E1E-712E-4575-967A-0AA64960904D</key>
 		<dict>
 			<key>ypos</key>
 			<real>10</real>
+		</dict>
+		<key>B97F5196-169F-473B-9751-F3DA9291CA68</key>
+		<dict>
+			<key>ypos</key>
+			<real>300</real>
 		</dict>
 	</dict>
 	<key>webaddress</key>
