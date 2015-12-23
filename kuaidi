@@ -8,14 +8,22 @@ require 'json'
 COMPANY_FILE = 'company.json'
 SAVE_FILE = 'query.json'
 
+USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:41.0) Gecko/20100101 Firefox/41.0'
+
+# opens a url or a file and convert result to json
+def json_open( uri )
+  opts = uri =~ /^http/ ? { "User-Agent" => USER_AGENT, "Referer" => "http://www.kuaidi100.com" } : { }
+  JSON.parse( open( uri, opts).read.force_encoding('utf-8'), :symbolize_names => true)
+end
+
 $company_list = []
 if File.file? COMPANY_FILE
-  $company_list = JSON.parse( open(COMPANY_FILE).read.force_encoding('UTF-8'), :symbolize_names => true )
+  $company_list = json_open COMPANY_FILE
 end
 
 def record_query(save_file, package, detail)
   begin
-    saves = JSON.parse(open(save_file).read.force_encoding('UTF-8'), :symbolize_names => true)
+    saves = json_open save_file
   rescue
     saves = {}
   end
@@ -43,16 +51,16 @@ end
 
 def company_code(package_no)
   url = 'http://www.kuaidi100.com/autonumber/auto?num=' + package_no
-  res = JSON.parse open(url).read
-  res = res.sort_by{|i| i['noCount'] }
-  res.empty? ? nil : res.last['comCode']
+  res = json_open( url )
+  res = res.sort_by{|i| i[:noCount] }
+  res.empty? ? nil : res.last[:comCode]
 end
 
 def kuaidi_status(package_no, com_code = nil)
-  company_code ||= company_code(package_no)
-  return  nil   unless company_code
-  detail_url     = "http://www.kuaidi100.com/query?type=#{company_code}&postid=#{package_no}&id=1&valicode=&temp=0.08001715072286408"
-  JSON.parse( open(detail_url).read, :symbolize_names => true )
+  com_code ||= company_code(package_no)
+  return  nil   unless com_code
+  detail_url     = "http://www.kuaidi100.com/query?type=#{com_code}&postid=#{package_no}&id=1&valicode=&temp=0.08001715072286408"
+  json_open detail_url
 end
 
 def format_status_record(record, color = "\e[37m")
@@ -86,7 +94,7 @@ def decode_company(code)
 end
 
 def saved_pacakge_detail(package, attr)
-  $saves ||= File.file?(SAVE_FILE) ? JSON.parse(open(SAVE_FILE).read.force_encoding('utf-8')) : {}
+  $saves ||= File.file?(SAVE_FILE) ? json_open(SAVE_FILE) : {}
   $saves[package] ? $saves[package][attr.to_s] : nil
 end
 
