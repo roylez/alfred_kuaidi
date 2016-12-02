@@ -13,7 +13,7 @@ USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:41.0) Gecko/20100
 # opens a url or a file and convert result to json
 def json_open( io_or_uri )
   if io_or_uri.is_a? String
-    opts = io_or_uri =~ /^http/ ? { "User-Agent" => USER_AGENT, "Referer" => "http://www.kuaidi100.com" } : { }
+    opts = io_or_uri =~ /^http/ ? { "User-Agent" => USER_AGENT, "Referer" => "https://www.kuaidi100.com" } : { }
     io = open( io_or_uri, opts)
   else
     io = io_or_uri
@@ -57,7 +57,7 @@ def record_query(save_file, package, detail)
 end
 
 def company_code(package_no)
-  url = 'http://www.kuaidi100.com/autonumber/auto?num=' + package_no
+  url = 'https://www.kuaidi100.com/autonumber/auto?num=' + package_no
   res = json_open( url )
   res = res.sort_by{|i| i[:noCount] }
   res.empty? ? nil : res.last[:comCode]
@@ -66,7 +66,7 @@ end
 def kuaidi_status(package_no, com_code = nil)
   com_code ||= company_code(package_no)
   return  nil   unless com_code
-  detail_url     = "http://www.kuaidi100.com/query?type=#{com_code}&postid=#{package_no}&id=1&valicode=&temp=0.08001715072286408"
+  detail_url     = "https://www.kuaidi100.com/query?type=#{com_code}&postid=#{package_no}&id=1&valicode=&temp=0.08001715072286408"
   json_open detail_url
 end
 
