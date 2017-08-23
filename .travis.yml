@@ -5,7 +5,8 @@ deploy:
   provider: releases
   api_key:
     secure: O5fkLlX0cowtaM09MejeqgUI02b7XV3J2AzQf1oHFIl/tdfs59Tw6Fmyr/9KiQ7MAhoJWIJX9b0U1h6Yr+bqCWyx9tFvDKQ0A248DjBp5sfjp7NO5R4xIlmj2xojr2gmBEfteTpRBY2r695wfd80Io/oB0Go51yiCmmmhsEO70n5RnXwd93AuOrN1clQd5cBt55ItHrMQwj9j/LnGXoVR+YPPl0NW321EqTuTXdVjRo0vlZuvwNcu6hAaO6E+rVOABrWy+64MQOiEFcxFCG66knJe3P3KBwvMxE0p4hS1xNZlV8wunq81wp21/YFZ3DCYpeWGPmzhxbyFHRe0AK9H2VepKwGHb/WpCQ6mE8P0Wx4aHf7k+icPNlSZIsX9mrH1sZwaAknqBfUu8uD07XH1Leo6VBMqQMbq3mqOO4EsqwpfTyaSVwiKZSdBe/1BqpIj9gHX/5V3pkTzyf+EZm56UiBwpQfNHj+5fW/cr7ADdnrk7uFRRuDdv4gDhdvlV8TcTs8jFJIItnkGkjRyZfDp3DzRnIt4Pd8v2cBY1HEovsoPK4Suf2hgf4gKDnXsFKia15Ph9nIy0ow8NFH7lkfgjUELKeYyuGF3/FU2+jFpzYkaHg4JbptZpXcGqQuIbyyENIpzQ/xiR4U8jQXZ9uDVuynxGF7c6z1IjU3mgziHNY=
-  file: "*.alfredworkflow"
+  file: "kuaidi.alfredworkflow"
   skip_cleanup: true
+  # file_glob: true
   on:
     repo: roylez/alfred_kuaidi
