@@ -10,3 +10,4 @@ deploy:
   # file_glob: true
   on:
     repo: roylez/alfred_kuaidi
+    tags: true
