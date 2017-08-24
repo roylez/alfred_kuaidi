@@ -52,8 +52,12 @@ class AlfredXMLItem < Element
   def title  text
     self << elem_with_text(:title, text)
   end
-  def subtitle text
-    self << elem_with_text(:subtitle, text)
+  def subtitle( text, mod = nil )
+    unless mod
+      self << elem_with_text(:subtitle, text)
+    else
+      self << elem_with_text(:subtitle, text, "mod" => mod)
+    end
   end
   def icon text
     self << elem_with_text(:icon, text)
@@ -63,9 +67,10 @@ class AlfredXMLItem < Element
   end
 
   private
-  def elem_with_text(label, text)
+  def elem_with_text(label, text, attrs = {})
     el = Element.new(label.to_s)
     el.text = text
+    el.add_attributes(attrs)
     el
   end
 end

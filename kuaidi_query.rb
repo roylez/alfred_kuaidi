@@ -20,16 +20,18 @@ def format_alfred_detail(detail)
     attribute :arg, detail[:data].collect{|r| format_status_record(r,nil)}.join(";")
     title     decode_company( detail[:com]) + '    ' + detail[:nu]
     icon      'icon.png'
-    subtitle  '按 Enter 将快递状态复制到剪切板'
+    subtitle  'Shift 显示详情 | Enter 复制到剪切板'
   end
 
   total = detail[:data].size
   detail[:data].each.with_index do |record, ind|
+    context = record[:context].gsub(/\s+/, ' ')
     al.add_item do
-      title     ("[%02d]" %  (total - ind)  + ' ' + record[:context].gsub(/\s+/, ' '))
+      title     ("[%02d]" %  (total - ind)  + ' ' + context)
       subtitle  record[:time]
+      subtitle  context, "shift"
       icon      record[:context] =~ /签收/ ? 'success.png' : ( ind.zero? ? 'truck.png' : 'up.png' )
-      attribute :valid, 'no'
+      attribute :arg, context
     end
   end
 
