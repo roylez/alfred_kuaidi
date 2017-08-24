@@ -65,6 +65,12 @@ class AlfredXMLItem < Element
   def attribute(att, value)
     attributes[att.to_s] = value
   end
+  def largetype(text)
+    self << elem_with_text(:text, text, "type" => "largetype")
+  end
+  def copy(text)
+    self << elem_with_text(:text, text, "type" => "copy")
+  end
 
   private
   def elem_with_text(label, text, attrs = {})
