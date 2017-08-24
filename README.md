@@ -5,5 +5,7 @@ alfred_kuaidi
 
 [直接下载workflow文件](https://github.com/roylez/alfred_kuaidi/releases)
 
+**注意**: Alfred 2.x用户请下载1.2版本
+
 ![查询界面](https://github.com/roylez/alfred_kuaidi/blob/master/screenshot.png)
 

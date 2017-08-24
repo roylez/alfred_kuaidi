@@ -29,11 +29,24 @@
 				<false/>
 			</dict>
 		</array>
-		<key>4B7DB9D4-3060-44CE-B15F-D37AD4D1B7F0</key>
+		<key>428F8DE3-8B77-4759-A5C9-54768F252F99</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>22B8ECA9-C3D1-4670-ACEE-79335B9AAEEA</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>4B7DB9D4-3060-44CE-B15F-D37AD4D1B7F0</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>428F8DE3-8B77-4759-A5C9-54768F252F99</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -131,7 +144,52 @@
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>127</integer>
+				<key>keyword</key>
+				<string>kd</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
 				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>查询中</string>
+				<key>script</key>
+				<string>/usr/bin/ruby kuaidi_query.rb {query}</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>请输入快递单号，不用输入快递公司</string>
+				<key>title</key>
+				<string>快递查询 (kd &lt;单号&gt;)</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>428F8DE3-8B77-4759-A5C9-54768F252F99</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>2</integer>
 				<key>escaping</key>
 				<integer>127</integer>
 				<key>keyword</key>
@@ -147,11 +205,8 @@
 				<key>runningsubtext</key>
 				<string>查询中</string>
 				<key>script</key>
-				<string>if [[ -n "{query}" ]]; then
-  /usr/bin/ruby ./kuaidi_query.rb {query}
-else
-  /usr/bin/ruby ./list_query.rb
-fi</string>
+				<string>/usr/bin/ruby ./list_query.rb
+</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -163,7 +218,7 @@ fi</string>
 				<key>type</key>
 				<integer>0</integer>
 				<key>withspace</key>
-				<true/>
+				<false/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -262,21 +317,28 @@ fi</string>
 		<key>1D9D3C1D-2D95-4BCC-B606-154D8CE31E7B</key>
 		<dict>
 			<key>xpos</key>
-			<integer>530</integer>
+			<integer>780</integer>
 			<key>ypos</key>
 			<integer>200</integer>
 		</dict>
 		<key>22B8ECA9-C3D1-4670-ACEE-79335B9AAEEA</key>
 		<dict>
 			<key>xpos</key>
-			<integer>330</integer>
+			<integer>580</integer>
+			<key>ypos</key>
+			<integer>120</integer>
+		</dict>
+		<key>428F8DE3-8B77-4759-A5C9-54768F252F99</key>
+		<dict>
+			<key>xpos</key>
+			<integer>300</integer>
 			<key>ypos</key>
 			<integer>120</integer>
 		</dict>
 		<key>4B7DB9D4-3060-44CE-B15F-D37AD4D1B7F0</key>
 		<dict>
 			<key>xpos</key>
-			<integer>130</integer>
+			<integer>100</integer>
 			<key>ypos</key>
 			<integer>120</integer>
 		</dict>
@@ -297,7 +359,7 @@ fi</string>
 		<key>A70A4E1E-712E-4575-967A-0AA64960904D</key>
 		<dict>
 			<key>xpos</key>
-			<integer>530</integer>
+			<integer>780</integer>
 			<key>ypos</key>
 			<integer>50</integer>
 		</dict>

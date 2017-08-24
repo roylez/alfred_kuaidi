@@ -19,8 +19,8 @@ def format_list(list)
     res << [
       {
         :arg          => number,
-        :valid        => 'no',
-        :autocomplete => number,
+        :valid        => 'yes',
+        :autocomplete => " #{number}",
       },
       record[:status] ?
         {
@@ -72,7 +72,7 @@ list = format_list(results)
 if tracking_number = possible_clipboard_tracking_number
   list.unshift(
     [
-      {:valid => 'no', :autocomplete => tracking_number},
+      {:valid => 'yes', :autocomplete => " #{tracking_number}", arg: tracking_number},
       {:title    => "[剪切板] 查询: #{tracking_number}",
        :subtitle => '按 Enter 把剪切板里的内容作为快递单号查询',
        :icon     => 'paste.png'
